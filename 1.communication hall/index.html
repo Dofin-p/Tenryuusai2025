@@ -2,9 +2,203 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ハローコミケ</title>
+    <title>問題</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+    :root {
+        --box-width: 120px;   /* 表示幅（必要に応じて調整） */
+        --font-size: 48px;    /* 文字サイズ（必要に応じて調整） */
+        --gap: 12px;          /* 行間 */
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        background: #ffffff;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        text-align: center; /* 全体を中央寄せ */
+    }
+
+    /* 中央配置用のコンテナ */
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    /* 問題のスタイル */
+    .card {
+        width: var(--box-width);
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+    }
+
+    .line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: var(--font-size);
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        white-space: nowrap;
+    }
+
+    .left {
+        letter-spacing: 0.02em;
+    }
+
+    .eq {
+        margin-left: 6px;
+    }
+
+    /* スマホなど幅が狭い場合に文字サイズを自動縮小 */
+    @media (max-width:420px) {
+        :root {
+            --font-size: 40px;
+            --box-width: 100px;
+        }
+    }
+
+    /* フォームや結果表示セクションの共通スタイル */
+    .content-section {
+        width: 100%;
+        max-width: 600px; /* 最大幅を設定 */
+        margin-bottom: 20px;
+    }
+    input[type="text"], input[type="password"] {
+        font-size: 16px;
+        padding: 8px;
+        margin-right: 8px;
+    }
+    button {
+        font-size: 16px;
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    
+    /* 結果・豆知識セクションのスタイル */
+    #result-section {
+        padding: 20px;
+    }
+    #result-section h1 {
+        font-size: 28px;
+        color: #2c7cff;
+    }
+    #result-section h2 {
+        font-size: 20px;
+        color: #333;
+        margin-top: 40px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    #result-section p {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+    }
+    #result-section .keyword-display {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+        background-color: #f0f0f0;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+</style>
 </head>
 <body>
-    <h1>ハローコミケ</h1>
+<div class="container">
+
+    <div id="keyword-section" class="content-section">
+        <h1>キーワードを入力してください</h1>
+        <form id="keyword-form">
+            <input type="password" id="keyword-input" maxlength="4" placeholder="4桁のキーワード" required>
+            <button type="submit">送信</button>
+        </form>
+    </div>
+
+    <div id="problem-section" class="content-section" style="display: none;">
+        <div class="card" role="list" aria-label="問題リスト" style="margin: 0 auto;">
+            <div class="line" role="listitem"><span class="left">T-E</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">N-0</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">R-C</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">S-N</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">I-C</span><span class="eq">=</span></div>
+        </div>
+        <form id="answer-form" style="margin-top: 30px;">
+            <input type="text" id="answer-input" placeholder="答えを入力" required>
+            <button type="submit">解答</button>
+        </form>
+    </div>
+
+    <div id="result-section" class="content-section" style="display: none;">
+        <h1>正解！次の場所はONOFFです！</h1>
+        <p>キーワードはこちら：8520</p>
+        <div class="keyword-display"></div>
+        
+        <h2>キーワード豆知識</h2>
+        <p>
+            キーワードの「8520」は天久保キャンパスの郵便番号「305-8520」から下4桁を取ったものだよ。(ｱｯﾊｲだからナニ？)
+        </p>
+    </div>
+
+</div>
+
+<script>
+    // --- 設定 ---
+    const CORRECT_KEYWORD = '1110'; 
+    const CORRECT_ANSWER = 'ONOFF';
+    // --- 設定ここまで ---
+
+    // 各セクションの要素を取得
+    const keywordSection = document.getElementById('keyword-section');
+    const problemSection = document.getElementById('problem-section');
+    const resultSection = document.getElementById('result-section');
+
+    // フォームの要素を取得
+    const keywordForm = document.getElementById('keyword-form');
+    const answerForm = document.getElementById('answer-form');
+
+    // 1. キーワードが送信された時の処理
+    keywordForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // ページの再読み込みを防ぐ
+        const keywordInput = document.getElementById('keyword-input');
+
+        if (keywordInput.value === CORRECT_KEYWORD) {
+            // 正解なら、キーワード画面を隠し、問題画面を表示
+            keywordSection.style.display = 'none';
+            problemSection.style.display = 'block';
+        } else {
+            alert('キーワードが違います。');
+            keywordInput.value = ''; // 入力欄を空にする
+        }
+    });
+
+    // 2. 解答が送信された時の処理
+    answerForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // ページの再読み込みを防ぐ
+        const answerInput = document.getElementById('answer-input');
+
+        // toUpperCase()で大文字に変換して比較することで、'onoff'でも正解になる
+        if (answerInput.value.toUpperCase() === CORRECT_ANSWER) {
+            // 正解なら、問題画面を隠し、結果・豆知識画面を表示
+            problemSection.style.display = 'none';
+            resultSection.style.display = 'block';
+        } else {
+            alert('答えが違います。');
+        }
+    });
+</script>
+
 </body>
 </html>

@@ -2,9 +2,172 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ハロー214</title>
+    <title>問題</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+    :root {
+        --box-width: 120px;   /* 表示幅（必要に応じて調整） */
+        --font-size: 48px;    /* 文字サイズ（必要に応じて調整） */
+        --gap: 12px;          /* 行間 */
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        background: #ffffff;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        text-align: center; /* フォームなどを中央寄せにするため追加 */
+    }
+
+    /* 中央配置 */
+    .wrap {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        box-sizing: border-box; /* paddingが高さに影響しないように追加 */
+    }
+
+    /* 問題のスタイル */
+    .card {
+        width: var(--box-width);
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+    }
+
+    .line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: var(--font-size);
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        white-space: nowrap;
+    }
+
+    .left {
+        letter-spacing: 0.02em;
+    }
+
+    .eq {
+        margin-left: 6px;
+    }
+
+    /* スマホなど幅が狭い場合に文字サイズを自動縮小 */
+    @media (max-width:420px) {
+        :root {
+            --font-size: 40px;
+            --box-width: 100px;
+        }
+    }
+
+    /* フォームや豆知識セクションのスタイル */
+    .input-section {
+        padding-top: 20px; /* 少し上に調整 */
+        padding-bottom: 20px;
+    }
+    input[type="text"], input[type="password"] {
+        font-size: 16px;
+        padding: 8px;
+        margin-right: 8px;
+    }
+    button {
+        font-size: 16px;
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    
+    /* 豆知識セクションのスタイル */
+    .trivia-section {
+        margin-top: 30px;
+        padding: 20px;
+        border-top: 1px solid #eee;
+    }
+    .trivia-section h2 {
+        font-size: 20px;
+        color: #333;
+    }
+    .trivia-section p {
+        font-size: 16px;
+        color: #555;
+        max-width: 600px;
+        margin: 0 auto; /* 中央寄せ */
+        line-height: 1.6;
+    }
+</style>
 </head>
 <body>
-    <h1>ハロー214</h1>
+
+    <div id="keyword-section" class="input-section">
+        <h1>キーワードを入力してください</h1>
+        <form id="keyword-form">
+            <input type="password" id="keyword-input" maxlength="4" placeholder="4桁のキーワード" required>
+            <button type="submit">送信</button>
+        </form>
+    </div>
+
+    <div id="problem-section" style="display: none;">
+        <div class="wrap">
+            <div class="card" role="list" aria-label="問題リスト">
+                <div class="line" role="listitem"><span class="left">T-E</span><span class="eq">=</span></div>
+                <div class="line" role="listitem"><span class="left">N-0</span><span class="eq">=</span></div>
+                <div class="line" role="listitem"><span class="left">R-C</span><span class="eq">=</span></div>
+                <div class="line" role="listitem"><span class="left">S-N</span><span class="eq">=</span></div>
+                <div class="line" role="listitem"><span class="left">I-C</span><span class="eq">=</span></div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+             <form id="answer-form">
+                <input type="text" id="answer-input" placeholder="答えを入力 (例: ONOFF)" required>
+                <button type="submit">解答</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="trivia-section" class="trivia-section" style="display: none;">
+        <h2>キーワード豆知識</h2>
+        <p>
+            キーワードの「2525」は、日本語の語呂合わせで「ニコニコ」と読めます。これは笑顔や微笑みを表す言葉です。実際に笑顔を作る（たとえ作り笑いでも）と、脳が楽しいと錯覚し、ストレス軽減効果のあるホルモンが分泌されると言われています。
+        </p>
+    </div>
+
+    <script>
+        // --- 設定 ---
+        const CORRECT_KEYWORD = '2525'; 
+        // --- 設定ここまで ---
+
+        const keywordForm = document.getElementById('keyword-form');
+        const keywordInput = document.getElementById('keyword-input');
+        const keywordSection = document.getElementById('keyword-section');
+        const problemSection = document.getElementById('problem-section');
+        const triviaSection = document.getElementById('trivia-section'); // 豆知識セクションを取得
+
+        keywordForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            if (keywordInput.value === CORRECT_KEYWORD) {
+                keywordSection.style.display = 'none';
+                problemSection.style.display = 'block';
+                triviaSection.style.display = 'block'; // 豆知識セクションも表示
+            } else {
+                alert('キーワードが違います。');
+                keywordInput.value = '';
+            }
+        });
+
+        const answerForm = document.getElementById('answer-form');
+        answerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const answer = document.getElementById('answer-input').value;
+            alert('「' + answer + '」と解答しました。');
+        });
+    </script>
+
 </body>
 </html>
