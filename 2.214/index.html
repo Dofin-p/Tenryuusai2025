@@ -18,17 +18,18 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-family: "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-        text-align: center; /* フォームなどを中央寄せにするため追加 */
+        text-align: center; /* 全体を中央寄せ */
     }
 
-    /* 中央配置 */
-    .wrap {
-        min-height: 100%;
+    /* 中央配置用のコンテナ */
+    .container {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 40px 20px;
-        box-sizing: border-box; /* paddingが高さに影響しないように追加 */
+        min-height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
     /* 問題のスタイル */
@@ -66,10 +67,11 @@
         }
     }
 
-    /* フォームや豆知識セクションのスタイル */
-    .input-section {
-        padding-top: 20px; /* 少し上に調整 */
-        padding-bottom: 20px;
+    /* フォームや結果表示セクションの共通スタイル */
+    .content-section {
+        width: 100%;
+        max-width: 600px; /* 最大幅を設定 */
+        margin-bottom: 20px;
     }
     input[type="text"], input[type="password"] {
         font-size: 16px;
@@ -82,28 +84,42 @@
         cursor: pointer;
     }
     
-    /* 豆知識セクションのスタイル */
-    .trivia-section {
-        margin-top: 30px;
+    /* 結果・豆知識セクションのスタイル */
+    #result-section {
         padding: 20px;
-        border-top: 1px solid #eee;
     }
-    .trivia-section h2 {
+    #result-section h1 {
+        font-size: 28px;
+        color: #2c7cff;
+    }
+    #result-section h2 {
         font-size: 20px;
         color: #333;
+        margin-top: 40px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
     }
-    .trivia-section p {
+    #result-section p {
         font-size: 16px;
         color: #555;
-        max-width: 600px;
-        margin: 0 auto; /* 中央寄せ */
         line-height: 1.6;
+    }
+    #result-section .keyword-display {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+        background-color: #f0f0f0;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 10px;
     }
 </style>
 </head>
 <body>
+<div class="container">
 
-    <div id="keyword-section" class="input-section">
+    <div id="keyword-section" class="content-section">
         <h1>キーワードを入力してください</h1>
         <form id="keyword-form">
             <input type="password" id="keyword-input" maxlength="4" placeholder="4桁のキーワード" required>
@@ -111,63 +127,78 @@
         </form>
     </div>
 
-    <div id="problem-section" style="display: none;">
-        <div class="wrap">
-            <div class="card" role="list" aria-label="問題リスト">
-                <div class="line" role="listitem"><span class="left">T-E</span><span class="eq">=</span></div>
-                <div class="line" role="listitem"><span class="left">N-0</span><span class="eq">=</span></div>
-                <div class="line" role="listitem"><span class="left">R-C</span><span class="eq">=</span></div>
-                <div class="line" role="listitem"><span class="left">S-N</span><span class="eq">=</span></div>
-                <div class="line" role="listitem"><span class="left">I-C</span><span class="eq">=</span></div>
-            </div>
+    <div id="problem-section" class="content-section" style="display: none;">
+        <div class="card" role="list" aria-label="問題リスト" style="margin: 0 auto;">
+            <div class="line" role="listitem"><span class="left">T-E</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">N-0</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">R-C</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">S-N</span><span class="eq">=</span></div>
+            <div class="line" role="listitem"><span class="left">I-C</span><span class="eq">=</span></div>
         </div>
-        
-        <div class="input-section">
-             <form id="answer-form">
-                <input type="text" id="answer-input" placeholder="答えを入力 (例: ONOFF)" required>
-                <button type="submit">解答</button>
-            </form>
-        </div>
+        <form id="answer-form" style="margin-top: 30px;">
+            <input type="text" id="answer-input" placeholder="答えを入力 (例: ONOFF)" required>
+            <button type="submit">解答</button>
+        </form>
     </div>
 
-    <div id="trivia-section" class="trivia-section" style="display: none;">
+    <div id="result-section" class="content-section" style="display: none;">
+        <h1>正解！</h1>
+        <p>キーワードはこちらです。</p>
+        <div class="keyword-display">1110</div>
+        
         <h2>キーワード豆知識</h2>
         <p>
-            キーワードの「2525」は、日本語の語呂合わせで「ニコニコ」と読めます。これは笑顔や微笑みを表す言葉です。実際に笑顔を作る（たとえ作り笑いでも）と、脳が楽しいと錯覚し、ストレス軽減効果のあるホルモンが分泌されると言われています。
+            キーワードの「1110」は、語呂合わせで「いいテント」と読めます。これにちなんで、日本記念日協会は11月10日を「いいテントの日」として認定しています。キャンプ文化の発展やテントの重要性を伝える日です。
         </p>
     </div>
 
-    <script>
-        // --- 設定 ---
-        const CORRECT_KEYWORD = '2525'; 
-        // --- 設定ここまで ---
+</div>
 
-        const keywordForm = document.getElementById('keyword-form');
+<script>
+    // --- 設定 ---
+    const CORRECT_KEYWORD = '1110'; 
+    const CORRECT_ANSWER = 'ONOFF';
+    // --- 設定ここまで ---
+
+    // 各セクションの要素を取得
+    const keywordSection = document.getElementById('keyword-section');
+    const problemSection = document.getElementById('problem-section');
+    const resultSection = document.getElementById('result-section');
+
+    // フォームの要素を取得
+    const keywordForm = document.getElementById('keyword-form');
+    const answerForm = document.getElementById('answer-form');
+
+    // 1. キーワードが送信された時の処理
+    keywordForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // ページの再読み込みを防ぐ
         const keywordInput = document.getElementById('keyword-input');
-        const keywordSection = document.getElementById('keyword-section');
-        const problemSection = document.getElementById('problem-section');
-        const triviaSection = document.getElementById('trivia-section'); // 豆知識セクションを取得
 
-        keywordForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        if (keywordInput.value === CORRECT_KEYWORD) {
+            // 正解なら、キーワード画面を隠し、問題画面を表示
+            keywordSection.style.display = 'none';
+            problemSection.style.display = 'block';
+        } else {
+            alert('キーワードが違います。');
+            keywordInput.value = ''; // 入力欄を空にする
+        }
+    });
 
-            if (keywordInput.value === CORRECT_KEYWORD) {
-                keywordSection.style.display = 'none';
-                problemSection.style.display = 'block';
-                triviaSection.style.display = 'block'; // 豆知識セクションも表示
-            } else {
-                alert('キーワードが違います。');
-                keywordInput.value = '';
-            }
-        });
+    // 2. 解答が送信された時の処理
+    answerForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // ページの再読み込みを防ぐ
+        const answerInput = document.getElementById('answer-input');
 
-        const answerForm = document.getElementById('answer-form');
-        answerForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const answer = document.getElementById('answer-input').value;
-            alert('「' + answer + '」と解答しました。');
-        });
-    </script>
+        // toUpperCase()で大文字に変換して比較することで、'onoff'でも正解になる
+        if (answerInput.value.toUpperCase() === CORRECT_ANSWER) {
+            // 正解なら、問題画面を隠し、結果・豆知識画面を表示
+            problemSection.style.display = 'none';
+            resultSection.style.display = 'block';
+        } else {
+            alert('答えが違います。');
+        }
+    });
+</script>
 
 </body>
 </html>

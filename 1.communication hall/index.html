@@ -1,202 +1,283 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>問題</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>絵文字の式</title>
 <style>
-    :root {
-        --box-width: 120px;   /* 表示幅（必要に応じて調整） */
-        --font-size: 48px;    /* 文字サイズ（必要に応じて調整） */
-        --gap: 12px;          /* 行間 */
+    :root{
+        --bg:#f6f8fb;
+        --card:#ffffff;
+        --accent1:#ff9a9e;
+        --accent2:#fad0c4;
+        --shadow: 0 8px 20px rgba(15,23,42,0.08);
+        --text:#111827;
+        --success: #28a745;
+        --error: #dc3545;
+    }
+    html,body{height:100%;}
+    body{
+        margin:0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        background: linear-gradient(180deg,var(--bg),#ffffff 60%);
+        color:var(--text);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:32px;
+        box-sizing: border-box; /* パディングによるサイズ変更を防ぐ */
     }
 
-    html, body {
-        height: 100%;
-        margin: 0;
-        background: #ffffff;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-family: "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-        text-align: center; /* 全体を中央寄せ */
+    .card{
+        background:var(--card);
+        padding:28px 36px;
+        border-radius:20px;
+        box-shadow:var(--shadow);
+        display:flex;
+        flex-direction: column; /* 縦並びにする */
+        align-items:center;
+        justify-content:center;
+        width: 100%;
+        max-width: 560px; /* カードの最大幅を設定 */
     }
 
-    /* 中央配置用のコンテナ */
-    .container {
+    .equation{
+        display:flex;
+        align-items:center;
+        gap:18px;
+        flex-wrap:wrap;
+        justify-content: center; /* 中央揃え */
+    }
+
+    .big-number{
+        font-size:84px;
+        font-weight:700;
+        line-height:1;
+        letter-spacing:-1px;
+    }
+
+    .operator{
+        font-size:44px;
+        font-weight:600;
+        opacity:0.9;
+    }
+
+    .emoji-box{
+        width:86px;
+        height:86px;
+        border-radius:16px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        box-shadow:0 6px 18px rgba(16,24,40,0.06);
+        font-size:44px;
+        background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    }
+
+    .emoji-box.purple{ background: linear-gradient(135deg,#a18cd1,#fbc2eb);} 
+    .emoji-box.blue{ background: linear-gradient(135deg,#89f7fe,#66a6ff);}
+
+    .result{
+        font-size:46px;
+        font-weight:700;
+        margin-left:6px;
+    }
+
+    .answer-section {
+        margin-top: 24px;
+        text-align: center;
+        width: 100%;
+    }
+
+    #quiz-form {
         display: flex;
-        flex-direction: column;
+        gap: 12px;
         align-items: center;
         justify-content: center;
-        min-height: 100%;
-        padding: 20px;
-        box-sizing: border-box;
     }
 
-    /* 問題のスタイル */
-    .card {
-        width: var(--box-width);
-        display: flex;
-        flex-direction: column;
-        gap: var(--gap);
-    }
-
-    .line {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--font-size);
+    .answer-input {
+        font-size: 24px;
         font-weight: 700;
-        line-height: 1;
-        color: #000;
-        white-space: nowrap;
+        text-align: center;
+        width: 100px;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        transition: border-color 0.3s;
+        letter-spacing: 4px; /* 文字間隔を広げて分かりやすくする */
+    }
+    .answer-input:focus {
+        outline: none;
+        border-color: var(--accent1);
     }
 
-    .left {
-        letter-spacing: 0.02em;
-    }
-
-    .eq {
-        margin-left: 6px;
-    }
-
-    /* スマホなど幅が狭い場合に文字サイズを自動縮小 */
-    @media (max-width:420px) {
-        :root {
-            --font-size: 40px;
-            --box-width: 100px;
-        }
-    }
-
-    /* フォームや結果表示セクションの共通スタイル */
-    .content-section {
-        width: 100%;
-        max-width: 600px; /* 最大幅を設定 */
-        margin-bottom: 20px;
-    }
-    input[type="text"], input[type="password"] {
-        font-size: 16px;
-        padding: 8px;
-        margin-right: 8px;
-    }
-    button {
-        font-size: 16px;
-        padding: 8px 12px;
+    .submit-button {
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
         cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    }
+
+    #result-message {
+        margin-top: 16px;
+        font-size: 18px;
+        font-weight: 500;
+        min-height: 2em; /* メッセージ表示領域を確保 */
     }
     
-    /* 結果・豆知識セクションのスタイル */
-    #result-section {
-        padding: 20px;
+    #result-message.success {
+        color: var(--text);
     }
-    #result-section h1 {
-        font-size: 28px;
-        color: #2c7cff;
+    #result-message.error {
+        color: var(--error);
     }
-    #result-section h2 {
-        font-size: 20px;
-        color: #333;
-        margin-top: 40px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
+
+    .keyword-display {
+        text-align: center;
     }
-    #result-section p {
+    .keyword {
+        font-size: 64px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        background: -webkit-linear-gradient(135deg, var(--accent1), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+    }
+    .trivia {
         font-size: 16px;
         color: #555;
-        line-height: 1.6;
     }
-    #result-section .keyword-display {
-        font-size: 24px;
-        font-weight: bold;
-        color: #000;
-        background-color: #f0f0f0;
-        padding: 10px 20px;
-        border-radius: 5px;
+
+    /* --- ▼ここから変更したスタイル▼ --- */
+    .next-location {
+        font-size: 28px; /* 文字サイズを大きく */
+        font-weight: 700; /* 太さを少し増す */
+        margin-bottom: 20px; /* 下の余白を広げる */
+        color: var(--text);
+    }
+    .next-location strong {
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        padding: 6px 14px; /* パディングを大きくしてハイライトを強調 */
+        border-radius: 10px; /* 角丸を調整 */
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 154, 158, 0.4); /* 影を追加して立体感を出す */
+        margin-left: 8px; /* 「次の場所は」との間に少しスペースを */
+        display: inline-block; /* 影やパディングが正しく表示されるように */
+    }
+    .note {
+        margin-top: 20px;
+        font-size: 15px;
+        color: #555;
+        background-color: #f6f8fb;
+        padding: 10px 14px;
+        border-radius: 8px;
         display: inline-block;
-        margin-top: 10px;
+    }
+    /* --- ▲ここまで変更したスタイル▲ --- */
+
+    @media (max-width:520px){
+        .card{padding: 24px;}
+        .big-number{font-size:56px}
+        .emoji-box{width:64px;height:64px;font-size:36px}
+        .operator{font-size:32px}
+        .answer-input{font-size: 20px; width: 80px;}
+        .submit-button{font-size: 16px; padding: 10px 18px;}
+        .keyword{font-size: 48px;}
+        .trivia{font-size: 14px;}
+        /* --- ▼ここから変更したスタイル▼ --- */
+        .next-location { 
+            font-size: 22px; /* スマホでも十分な大きさに */
+            margin-bottom: 16px;
+        }
+        .next-location strong {
+            padding: 5px 12px; /* スマホ用にパディング調整 */
+        }
+        .note { 
+            font-size: 13px; 
+            margin-top: 16px; 
+        }
+        /* --- ▲ここまで変更したスタイル▲ --- */
     }
 </style>
 </head>
 <body>
-<div class="container">
+<main class="card">
+    <div class="equation" aria-label="絵文字の式">
+        <div class="big-number">102</div>
+        <div class="operator">−</div>
+        <div class="emoji-box" title="目覚まし時計">⏰</div>
+        <div class="operator">＋</div>
+        <div class="emoji-box purple" title="パトカー">🚓</div>
+        <div class="operator">＋</div>
+        <div class="emoji-box blue" title="救急車">🚑</div>
+        <div class="operator">＝</div>
+        <div class="result">?</div>
+    </div>
 
-    <div id="keyword-section" class="content-section">
-        <h1>キーワードを入力してください</h1>
-        <form id="keyword-form">
-            <input type="password" id="keyword-input" maxlength="4" placeholder="4桁のキーワード" required>
-            <button type="submit">送信</button>
+    <div class="answer-section">
+        <form id="quiz-form">
+            <input type="text" id="answer-input" class="answer-input" maxlength="3" placeholder="答え" autocomplete="off">
+            <button type="submit" class="submit-button">回答</button>
         </form>
+        <div id="result-message"></div>
     </div>
 
-    <div id="problem-section" class="content-section" style="display: none;">
-        <div class="card" role="list" aria-label="問題リスト" style="margin: 0 auto;">
-            <div class="line" role="listitem"><span class="left">T-E</span><span class="eq">=</span></div>
-            <div class="line" role="listitem"><span class="left">N-0</span><span class="eq">=</span></div>
-            <div class="line" role="listitem"><span class="left">R-C</span><span class="eq">=</span></div>
-            <div class="line" role="listitem"><span class="left">S-N</span><span class="eq">=</span></div>
-            <div class="line" role="listitem"><span class="left">I-C</span><span class="eq">=</span></div>
-        </div>
-        <form id="answer-form" style="margin-top: 30px;">
-            <input type="text" id="answer-input" placeholder="答えを入力" required>
-            <button type="submit">解答</button>
-        </form>
-    </div>
-
-    <div id="result-section" class="content-section" style="display: none;">
-        <h1>正解！次の場所はONOFFです！</h1>
-        <p>キーワードはこちら：8520</p>
-        <div class="keyword-display"></div>
-        
-        <h2>キーワード豆知識</h2>
-        <p>
-            キーワードの「8520」は天久保キャンパスの郵便番号「305-8520」から下4桁を取ったものだよ。(ｱｯﾊｲだからナニ？)
-        </p>
-    </div>
-
-</div>
+</main>
 
 <script>
-    // --- 設定 ---
-    const CORRECT_KEYWORD = '1110'; 
-    const CORRECT_ANSWER = 'ONOFF';
-    // --- 設定ここまで ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('quiz-form');
+        const input = document.getElementById('answer-input');
+        const messageEl = document.getElementById('result-message');
+        const answerSection = document.querySelector('.answer-section');
 
-    // 各セクションの要素を取得
-    const keywordSection = document.getElementById('keyword-section');
-    const problemSection = document.getElementById('problem-section');
-    const resultSection = document.getElementById('result-section');
+        const correctAnswer = '214';
 
-    // フォームの要素を取得
-    const keywordForm = document.getElementById('keyword-form');
-    const answerForm = document.getElementById('answer-form');
+        const keyword = '1110';
+        const nextLocation = 'ONOFF';
+        const trivia = '（ちなみに、11月10日は「トイレの日」です！）';
 
-    // 1. キーワードが送信された時の処理
-    keywordForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // ページの再読み込みを防ぐ
-        const keywordInput = document.getElementById('keyword-input');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); 
 
-        if (keywordInput.value === CORRECT_KEYWORD) {
-            // 正解なら、キーワード画面を隠し、問題画面を表示
-            keywordSection.style.display = 'none';
-            problemSection.style.display = 'block';
-        } else {
-            alert('キーワードが違います。');
-            keywordInput.value = ''; // 入力欄を空にする
-        }
-    });
+            const userAnswer = input.value;
 
-    // 2. 解答が送信された時の処理
-    answerForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // ページの再読み込みを防ぐ
-        const answerInput = document.getElementById('answer-input');
+            if (userAnswer === correctAnswer) {
+                // 正解の処理
+                messageEl.textContent = '';
+                messageEl.classList.remove('error');
+                messageEl.classList.add('success');
+                
+                answerSection.innerHTML = `
+                    <div class="keyword-display">
+                        <div class="next-location">次の場所は <strong>${nextLocation}</strong></div>
+                        <div class="keyword">${keyword}</div>
+                        <div class="trivia">${trivia}</div>
+                        <div class="note">このキーワードは次の場所で使います。<br>忘れないようにスクリーンショットを撮っておきましょう！</div>
+                    </div>
+                `;
 
-        // toUpperCase()で大文字に変換して比較することで、'onoff'でも正解になる
-        if (answerInput.value.toUpperCase() === CORRECT_ANSWER) {
-            // 正解なら、問題画面を隠し、結果・豆知識画面を表示
-            problemSection.style.display = 'none';
-            resultSection.style.display = 'block';
-        } else {
-            alert('答えが違います。');
-        }
+            } else {
+                // 不正解の処理
+                messageEl.textContent = '残念！もう一度考えてみよう。';
+                messageEl.classList.remove('success');
+                messageEl.classList.add('error');
+                input.value = '';
+                input.focus();
+            }
+        });
     });
 </script>
 
