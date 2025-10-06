@@ -2,9 +2,129 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ハローonoff</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>謎解きチャレンジ</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            padding: 12px;
+            margin-right: 10px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
 </head>
 <body>
-    <h1>ハローonoff</h1>
+
+    <div id="keyword-screen" class="container">
+        <h1>キーワード認証</h1>
+        <p>前回表示された4桁のキーワードを入力してください。</p>
+        <input type="text" id="keyword-input" maxlength="4" placeholder="例: 0000">
+        <button onclick="checkKeyword()">決定</button>
+    </div>
+
+    <div id="quiz-screen" class="container" style="display: none;">
+        <h1>問題</h1>
+        <img src="../image_4ebf55.png" alt="表示不可">
+        <p>画像の問題から導き出される答えを入力してください。</p>
+        <input type="text" id="answer-input" placeholder="答え">
+        <button onclick="checkAnswer()">回答する</button>
+    </div>
+
+    <div id="result-screen" class="container" style="display: none;">
+        <h1>クリア！</h1>
+        <p>次の場所</p>
+        <p class="result-text">体育館</p>
+        <p>次のクイズチャレンジに必要なパスワード</p>
+        <p class="result-text">0101</p>
+        <p>筑波技術大学に属する教員数だお(ｱｯﾊｲだからナニ?)</p>
+    </div>
+
+    <script>
+        // キーワードをチェックする関数
+        function checkKeyword() {
+            // 入力された値を取得
+            const keywordInput = document.getElementById('keyword-input').value;
+
+            // キーワードが  かどうかを判定
+            if (keywordInput === '4315') {
+                // 正しい場合、現在の画面を非表示にし、問題画面を表示
+                document.getElementById('keyword-screen').style.display = 'none';
+                document.getElementById('quiz-screen').style.display = 'block';
+            } else {
+                // 間違っている場合、アラートを表示
+                alert('キーワードが違います。');
+            }
+        }
+
+        // 答えをチェックする関数
+        function checkAnswer() {
+            // 入力された値を取得
+            const answerInput = document.getElementById('answer-input').value;
+
+            // 入力値を大文字に変換して 'GYM' と比較（'gym'や'Gym'でも正解になるように）
+            if (answerInput.toUpperCase() === 'GYM') {
+                // 正しい場合、問題画面を非表示にし、結果画面を表示
+                document.getElementById('quiz-screen').style.display = 'none';
+                document.getElementById('result-screen').style.display = 'block';
+            } else {
+                // 間違っている場合、アラートを表示
+                alert('答えが違います。');
+            }
+        }
+    </script>
+
 </body>
 </html>

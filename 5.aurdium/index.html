@@ -2,9 +2,160 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ハロー講堂</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>謎解きチャレンジ</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+            box-sizing: border-box;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        /* 問題文のスタイル */
+        .quiz-question {
+            font-size: 2em;
+            font-weight: bold;
+            letter-spacing: 8px;
+            padding: 30px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background-color: #ffffff;
+            cursor: text;
+            user-select: all;
+        }
+        /* 各色の設定 */
+        .color-sky { color: #87CEEB; } /* 空色 */
+        .color-scarlet { color: #D7003A; } /* 緋色 */
+        .color-black { color: #000000; } /* 黒 */
+        .color-gray { color: #808080; } /* 灰色 */
+        .color-white { color: #FFFFFF; } /* 白 (背景と同化) */
+        
+        input[type="text"] {
+            padding: 12px;
+            margin-right: 10px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        /* 「star」の場合に表示するメッセージのスタイル */
+        .message-text {
+            font-size: 1.2em;
+            color: #555;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
 </head>
 <body>
-    <h1>ハロー講堂</h1>
+
+    <div id="keyword-screen" class="container">
+        <h1>キーワード認証</h1>
+        <p>前回表示された4桁のキーワードを入力してください。</p>
+        <input type="text" id="keyword-input" maxlength="4" placeholder="例: 1111">
+        <button onclick="checkKeyword()">決定</button>
+    </div>
+
+    <div id="quiz-screen" class="container" style="display: none;">
+        <h1>問題</h1>
+        <p class="quiz-question">
+            <span class="color-sky">空1</span><span class="color-scarlet">緋7</span><span class="color-black">黒3</span><span class="color-gray">灰2</span><span class="color-white">白4</span>
+        </p>
+        <p>答えを入力してください。</p>
+        <input type="text" id="answer-input" placeholder="答えを入力">
+        <button onclick="checkAnswer()">回答する</button>
+    </div>
+
+    <div id="result-screen-star" class="container" style="display: none;">
+        <h1>クリア！</h1>
+        <p>次の場所</p>
+        <p class="result-text">星</p>
+        <p class="message-text">大切なものは目に見えない</p>
+    </div>
+
+    <div id="result-screen-start" class="container" style="display: none;">
+        <h1>クリア！</h1>
+        <p>次の場所</p>
+        <p class="result-text">始まりの場所</p>
+        <p>チャレンジに必要なパスワード</p>
+        <p class="result-text">1943</p>
+    </div>
+
+    <script>
+        // キーワードをチェックする関数
+        function checkKeyword() {
+            const keywordInput = document.getElementById('keyword-input').value;
+            if (keywordInput === '1111') {
+                document.getElementById('keyword-screen').style.display = 'none';
+                document.getElementById('quiz-screen').style.display = 'block';
+            } else {
+                alert('キーワードが違います。');
+            }
+        }
+
+        // 答えをチェックし、内容に応じて表示を分岐させる関数
+        function checkAnswer() {
+            const answerInput = document.getElementById('answer-input').value;
+            const lowerCaseAnswer = answerInput.toLowerCase();
+
+            // 答えが "star" の場合の処理
+            if (lowerCaseAnswer === 'star') {
+                document.getElementById('quiz-screen').style.display = 'none';
+                document.getElementById('result-screen-star').style.display = 'block';
+            
+            // 答えが "start" の場合の処理
+            } else if (lowerCaseAnswer === 'start') {
+                document.getElementById('quiz-screen').style.display = 'none';
+                document.getElementById('result-screen-start').style.display = 'block';
+
+            // どちらでもない（不正解）の場合の処理
+            } else {
+                alert('答えが違います。');
+            }
+        }
+    </script>
+
 </body>
 </html>
